@@ -10,7 +10,7 @@ function handleSubmit(event) {
     event.preventDefault();
     clearGallery();
     showLoader();
-    const inputImg = event.target.elements["search-text"].value;
+    const inputImg = event.target.elements["search-text"].value.trim();
     if (!inputImg) {
         iziToast.error({
             title: 'Error',
