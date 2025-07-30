@@ -54,16 +54,24 @@ export function clearGallery() {
 }
 
 export function renderGallery(images) {
-    gallery.innerHTML = createGallery(images);
+    gallery.insertAdjacentHTML("beforeend", createGallery(images));
     updateLightbox();
 };
 
 export function showLoader() {
-    const loader = document.querySelector('.hidden');
+    const loader = document.querySelector('.hiden');
     loader.classList.add('loader');
 };
 
 export function hideLoader() {
-    const loader = document.querySelector('.hidden');
+    const loader = document.querySelector('.hiden');
     loader.classList.remove('loader');
+};
+export function showLoadMoreButton() {
+    const nextBtn = document.querySelector('.nextBtn');
+    nextBtn.classList.add('hidden');
+};
+export function hideLoadMoreButton() {
+    const nextBtn = document.querySelector('.nextBtn');
+    nextBtn.classList.remove('hidden');
 };
