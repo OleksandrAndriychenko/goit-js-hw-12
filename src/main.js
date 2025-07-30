@@ -62,8 +62,6 @@ function handleSubmit(event) {
 
 nextBtn.addEventListener("click", handleClic);
 function handleClic(event) {
-    console.log(totalPages);
-    console.log(urlPage);
     if (urlPage < totalPages) {
         showLoader();
         getImagesByQuery(inputImg, urlPage)
