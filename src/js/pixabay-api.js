@@ -15,9 +15,8 @@ export default async function getImagesByQuery(query, page) {
     try {
         const response = await axios.get(`${BASE_URL}?${params}`);
         return response.data;
-        
     }
-    catch (er) {
+    catch (error) {
         console.error("Помилка при отриманні зображень:", error);
     }
 };

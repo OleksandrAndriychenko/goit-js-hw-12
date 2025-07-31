@@ -7,11 +7,50 @@ const nextBtn = document.querySelector(".nextBtn");
 let urlPage = 1;
 let totalPages;
 let inputImg
-showLoadMoreButton();
+function izi() {
+    return iziToast.error({
+            title: 'Error',
+            message: 'Sorry, there are no images matching your search query. Please try again!',
+            position: 'topRight',
+            backgroundColor: "#ef4040",
+            titleColor: "#fff",
+            messageColor: "#fff",
+        });
+};
+
+
+function iziEnd() {
+    return iziToast.error({
+                    title: 'Error',
+                    message: "We're sorry, but you've reached the end of search results.",
+                    position: 'topRight',
+                    backgroundColor: "#ef4040",
+                    titleColor: "#fff",
+                    messageColor: "#fff",
+                });
+};
+
+
+function smoothScrollAfterLoad() {
+    const firstCard = document.querySelector('.gallery-card');
+    if (!firstCard) return;
+    const cardHeight = firstCard.getBoundingClientRect().height;
+    window.scrollBy({
+        top: cardHeight * 2,
+        behavior: 'smooth',
+    });
+};
+
+
+
+
+
+
+
+hideLoadMoreButton();
 hideLoader();
 form.addEventListener("submit", handleSubmit);
 function handleSubmit(event) {
-    urlPage = 1;
     event.preventDefault();
     clearGallery();
     showLoader();
@@ -29,80 +68,50 @@ function handleSubmit(event) {
         return;
     } else {getImagesByQuery(inputImg, urlPage)
         .then(data => {
-            if (data.length <= 0) {
+            if (data.hits.length <= 0) {
                 hideLoader();
-                iziToast.error({
-                    title: 'Error',
-                    message: 'Sorry, there are no images matching your search query. Please try again!',
-                    position: 'topRight',
-                    backgroundColor: "#ef4040",
-                    titleColor: "#fff",
-                    messageColor: "#fff",
-                });
+                izi();
             } else {
                 hideLoader();
                 renderGallery(data.hits);
-                totalPages = data.total / data.hits.length;
-                urlPage += 1;
-                hideLoadMoreButton();
+                totalPages = data.totalHits / data.hits.length;
+                if (totalPages <= 1) {
+                    hideLoadMoreButton();
+                    iziEnd();
+                } else {
+                    showLoadMoreButton();
+                }
             }
         })
         .catch(error => {
             hideLoader();
-            iziToast.error({
-                    title: 'Error',
-                    message: 'Sorry, there are no images matching your search query. Please try again!',
-                    position: 'topRight',
-                    backgroundColor: "#ef4040",
-                    titleColor: "#fff",
-                    messageColor: "#fff",
-                });
+            izi();
         })}
 };
 
 nextBtn.addEventListener("click", handleClic);
 function handleClic(event) {
-    if (urlPage < totalPages) {
+    urlPage += 1;
+    if (urlPage <= totalPages) {
         showLoader();
         getImagesByQuery(inputImg, urlPage)
             .then(data => {
-                if (data.length <= 0) {
+                if (data.hits.length <= 0) {
                     hideLoader();
-                    iziToast.error({
-                        title: 'Error',
-                        message: 'Sorry, there are no images matching your search query. Please try again!',
-                        position: 'topRight',
-                        backgroundColor: "#ef4040",
-                        titleColor: "#fff",
-                        messageColor: "#fff",
-                    });
+                    izi();
                 } else {
                     hideLoader();
                     renderGallery(data.hits);
-                    totalPages = data.total / data.hits.length;
+                    smoothScrollAfterLoad();
                     urlPage += 1;
                 }
             })
             .catch(error => {
                 hideLoader();
-                iziToast.error({
-                    title: 'Error',
-                    message: 'Sorry, there are no images matching your search query. Please try again!',
-                    position: 'topRight',
-                    backgroundColor: "#ef4040",
-                    titleColor: "#fff",
-                    messageColor: "#fff",
-                });
+                izi();
             })
     } else {
-        showLoadMoreButton();
-        iziToast.error({
-                    title: 'Error',
-                    message: "We're sorry, but you've reached the end of search results.",
-                    position: 'topRight',
-                    backgroundColor: "#ef4040",
-                    titleColor: "#fff",
-                    messageColor: "#fff",
-                });
+        hideLoadMoreButton();
+        iziEnd();
     }
 };

@@ -17,7 +17,7 @@ function createGallery(images) {
                 <h3>${likes}</h3>
                 </div>
                 <div class="views">
-                <h3>views</h3></h3>
+                <h3>views</h3>
                 <h3>${views}</h3>
                 </div>
                 <div class="comments">
@@ -59,19 +59,27 @@ export function renderGallery(images) {
 };
 
 export function showLoader() {
-    const loader = document.querySelector('.hiden');
-    loader.classList.add('loader');
+    const loader = document.querySelector('.loadSpan');
+    if (loader) {
+        loader.classList.add('loader');
+    }
 };
 
 export function hideLoader() {
-    const loader = document.querySelector('.hiden');
-    loader.classList.remove('loader');
-};
-export function showLoadMoreButton() {
-    const nextBtn = document.querySelector('.nextBtn');
-    nextBtn.classList.add('hidden');
+    const loader = document.querySelector('.loadSpan');
+    if (loader) {
+        loader.classList.remove('loader');
+    }
 };
 export function hideLoadMoreButton() {
     const nextBtn = document.querySelector('.nextBtn');
-    nextBtn.classList.remove('hidden');
+    if (nextBtn) {
+        nextBtn.classList.add('hidden');
+    }
+};
+export function showLoadMoreButton() {
+    const nextBtn = document.querySelector('.nextBtn');
+    if (nextBtn) {
+        nextBtn.classList.remove('hidden');
+    }
 };
