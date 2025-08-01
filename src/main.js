@@ -50,68 +50,60 @@ function smoothScrollAfterLoad() {
 hideLoadMoreButton();
 hideLoader();
 form.addEventListener("submit", handleSubmit);
-function handleSubmit(event) {
+
+async function handleSubmit(event) {
+    urlPage = 1;
     event.preventDefault();
     clearGallery();
     showLoader();
     inputImg = event.target.elements["search-text"].value.trim();
     if (!inputImg) {
-        iziToast.error({
-            title: 'Error',
-            message: 'Sorry, there are no images matching your search query. Please try again!',
-            position: 'topRight',
-            backgroundColor: "#ef4040",
-            titleColor: "#fff",
-            messageColor: "#fff",
-        });
+        izi();
         hideLoader();
         return;
-    } else {getImagesByQuery(inputImg, urlPage)
-        .then(data => {
-            if (data.hits.length <= 0) {
-                hideLoader();
-                izi();
-            } else {
-                hideLoader();
-                renderGallery(data.hits);
-                totalPages = data.totalHits / data.hits.length;
-                if (totalPages <= 1) {
-                    hideLoadMoreButton();
-                    iziEnd();
-                } else {
-                    showLoadMoreButton();
-                }
-            }
-        })
-        .catch(error => {
-            hideLoader();
+    }
+    try {
+        const data = await getImagesByQuery(inputImg, urlPage);
+        if (data.hits.length <= 0) {
             izi();
-        })}
-};
+            hideLoadMoreButton();
+        } else {
+            renderGallery(data.hits);
+            totalPages = Math.ceil(data.totalHits / data.hits.length);
+            if (totalPages <= 1) {
+                hideLoadMoreButton();
+                iziEnd();
+            } else {
+                showLoadMoreButton();
+            }
+        }
+    } catch (error) {
+        izi();
+    } finally {
+        hideLoader();
+    }
+}
 
 nextBtn.addEventListener("click", handleClic);
-function handleClic(event) {
+async function handleClic(event) {
     urlPage += 1;
     if (urlPage <= totalPages) {
         showLoader();
-        getImagesByQuery(inputImg, urlPage)
-            .then(data => {
-                if (data.hits.length <= 0) {
-                    hideLoader();
-                    izi();
-                } else {
-                    hideLoader();
-                    renderGallery(data.hits);
-                    smoothScrollAfterLoad();
-                    urlPage += 1;
-                }
-            })
-            .catch(error => {
-                hideLoader();
+        try {
+            const data = await getImagesByQuery(inputImg, urlPage);
+            if (data.hits.length <= 0) {
                 izi();
-            })
+            } else {
+                renderGallery(data.hits);
+                smoothScrollAfterLoad();
+            }
+        } catch (error) {
+            izi();
+        } finally {
+            hideLoader();
+        }
     } else {
         hideLoadMoreButton();
         iziEnd();
     }
-};
+}
