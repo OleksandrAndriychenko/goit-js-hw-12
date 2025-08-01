@@ -58,7 +58,14 @@ async function handleSubmit(event) {
     showLoader();
     inputImg = event.target.elements["search-text"].value.trim();
     if (!inputImg) {
-        izi();
+        iziToast.error({
+            title: 'Error',
+            message: "Please, enter your request.",
+            position: 'topRight',
+            backgroundColor: "#ef4040",
+            titleColor: "#fff",
+            messageColor: "#fff",
+        });
         hideLoader();
         return;
     }
@@ -87,7 +94,24 @@ async function handleSubmit(event) {
 nextBtn.addEventListener("click", handleClic);
 async function handleClic(event) {
     urlPage += 1;
-    if (urlPage <= totalPages) {
+    if (urlPage >= totalPages) {
+        showLoader();
+        try {
+            const data = await getImagesByQuery(inputImg, urlPage);
+            if (data.hits.length <= 0) {
+                izi();
+            } else {
+                renderGallery(data.hits);
+                smoothScrollAfterLoad();
+            }
+        } catch (error) {
+            izi();
+        } finally {
+            hideLoader();
+            hideLoadMoreButton();
+            iziEnd();
+        }
+    } else{
         showLoader();
         try {
             const data = await getImagesByQuery(inputImg, urlPage);
@@ -102,8 +126,5 @@ async function handleClic(event) {
         } finally {
             hideLoader();
         }
-    } else {
-        hideLoadMoreButton();
-        iziEnd();
     }
-}
+};
